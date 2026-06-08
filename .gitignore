@@ -82,3 +82,10 @@ credentials.json
 .DS_Store
 Thumbs.db
 Desktop.ini
+
+# --- 숨김 파일 및 폴더 (Dotfiles & Dotfolders) ---
+# 모든 숨김 파일과 폴더를 무시합니다.
+.*
+# 단, git 및 개발 설정에 필요한 중요 숨김 파일/폴더는 예외로 합니다.
+!.gitignore
+!.gitattributes
