@@ -43,9 +43,18 @@ st.set_page_config(
 current_dir = os.path.dirname(os.path.abspath(__file__))
 pages_dir = os.path.join(current_dir, "pages")
 
-# .env 로드 수행
-env_file_path = os.path.join(os.path.dirname(current_dir), ".env")
-load_env(env_file_path)
+# .env 로드 수행 (여러 후보 경로 탐색)
+env_candidates = [
+    os.path.join(os.path.dirname(current_dir), ".env"),
+    os.path.join(current_dir, ".env"),
+    os.path.abspath(".env"),
+    os.path.join(os.getcwd(), "naver-api-app", ".env")
+]
+
+for path in env_candidates:
+    if os.path.exists(path):
+        load_env(path)
+        break
 
 # 사이드바 타이틀
 st.sidebar.title("🔑 네이버 API 설정")
@@ -54,47 +63,49 @@ st.sidebar.title("🔑 네이버 API 설정")
 env_client_id = os.environ.get("NAVER_CLIENT_ID", "")
 env_client_secret = os.environ.get("NAVER_CLIENT_SECRET", "")
 
-default_client_id = st.session_state.get("client_id") or env_client_id
-default_client_secret = st.session_state.get("client_secret") or env_client_secret
-
-# 세션 상태에 API 키 즉시 반영
-st.session_state["client_id"] = default_client_id
-st.session_state["client_secret"] = default_client_secret
+# 세션 상태에 API 키가 아직 설정되지 않았다면 환경 변수 값으로 우선 적용
+if "client_id" not in st.session_state:
+    st.session_state["client_id"] = env_client_id
+if "client_secret" not in st.session_state:
+    st.session_state["client_secret"] = env_client_secret
 
 # 1. API Key UI 구성
 if env_client_id and env_client_secret:
-    st.sidebar.success("✅ `.env` 파일에서 네이버 API 설정을 자동으로 로드했습니다.")
+    st.sidebar.success("✅ `.env` 파일에서 API 설정을 자동으로 로드했습니다.")
     with st.sidebar.expander("🔑 API 키 수동 변경"):
-        client_id = st.text_input(
+        client_id_input = st.text_input(
             "Client ID",
-            value=default_client_id,
+            value=st.session_state["client_id"],
             type="password",
             help="네이버 개발자 센터에서 발급받은 Client ID를 입력하세요."
         )
-        client_secret = st.text_input(
+        client_secret_input = st.text_input(
             "Client Secret",
-            value=default_client_secret,
+            value=st.session_state["client_secret"],
             type="password",
             help="네이버 개발자 센터에서 발급받은 Client Secret을 입력하세요."
         )
-        # 사용자가 변경하면 세션 상태 업데이트
-        st.session_state["client_id"] = client_id
-        st.session_state["client_secret"] = client_secret
+        if client_id_input != st.session_state["client_id"] or client_secret_input != st.session_state["client_secret"]:
+            st.session_state["client_id"] = client_id_input
+            st.session_state["client_secret"] = client_secret_input
+            st.rerun()
 else:
-    client_id = st.sidebar.text_input(
+    client_id_input = st.sidebar.text_input(
         "Client ID",
-        value=default_client_id,
+        value=st.session_state.get("client_id", ""),
         type="password",
         help="네이버 개발자 센터에서 발급받은 Client ID를 입력하세요."
     )
-    client_secret = st.sidebar.text_input(
+    client_secret_input = st.sidebar.text_input(
         "Client Secret",
-        value=default_client_secret,
+        value=st.session_state.get("client_secret", ""),
         type="password",
         help="네이버 개발자 센터에서 발급받은 Client Secret을 입력하세요."
     )
-    st.session_state["client_id"] = client_id
-    st.session_state["client_secret"] = client_secret
+    if client_id_input != st.session_state.get("client_id", "") or client_secret_input != st.session_state.get("client_secret", ""):
+        st.session_state["client_id"] = client_id_input
+        st.session_state["client_secret"] = client_secret_input
+        st.rerun()
 
 # 최종 API 키 설정 확인
 client_id = st.session_state.get("client_id", "")
