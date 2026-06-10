@@ -65,15 +65,21 @@ data/
 .env.*
 secrets.json
 credentials.json
+# 일반적인 설정 파일 (설정 정보 포함)
+*.config
+*.conf
+*.cfg
+*.ini
+config.json
+config.yaml
+config.yml
+settings.json
+settings.yaml
+local_settings.py
 
 # --- IDE 및 에디터 설정 ---
 # VS Code
 .vscode/
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-!.vscode/code-workspace
 
 # PyCharm / IntelliJ
 .idea/
@@ -89,3 +95,4 @@ Desktop.ini
 # 단, git 및 개발 설정에 필요한 중요 숨김 파일/폴더는 예외로 합니다.
 !.gitignore
 !.gitattributes
+!**/.env.example
