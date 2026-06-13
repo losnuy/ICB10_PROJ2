@@ -62,8 +62,21 @@ st.sidebar.title("🔑 네이버 API 설정")
 # 환경 변수 및 세션 상태에서 API Key 로드
 env_client_id = os.environ.get("NAVER_CLIENT_ID", "")
 env_client_secret = os.environ.get("NAVER_CLIENT_SECRET", "")
+loaded_from_secrets = False
 
-# 세션 상태에 API 키가 아직 설정되지 않았다면 환경 변수 값으로 우선 적용
+# 환경 변수에 없으면 st.secrets에서 로드 시도
+if not env_client_id or not env_client_secret:
+    try:
+        if "NAVER_CLIENT_ID" in st.secrets:
+            env_client_id = st.secrets["NAVER_CLIENT_ID"]
+        if "NAVER_CLIENT_SECRET" in st.secrets:
+            env_client_secret = st.secrets["NAVER_CLIENT_SECRET"]
+        if env_client_id and env_client_secret:
+            loaded_from_secrets = True
+    except Exception:
+        pass
+
+# 세션 상태에 API 키가 아직 설정되지 않았다면 로드한 값으로 우선 적용
 if "client_id" not in st.session_state:
     st.session_state["client_id"] = env_client_id
 if "client_secret" not in st.session_state:
@@ -71,7 +84,11 @@ if "client_secret" not in st.session_state:
 
 # 1. API Key UI 구성
 if env_client_id and env_client_secret:
-    st.sidebar.success("✅ `.env` 파일에서 API 설정을 자동으로 로드했습니다.")
+    if loaded_from_secrets:
+        st.sidebar.success("✅ Streamlit Secrets에서 API 설정을 자동으로 로드했습니다.")
+    else:
+        st.sidebar.success("✅ `.env` 파일에서 API 설정을 자동으로 로드했습니다.")
+        
     with st.sidebar.expander("🔑 API 키 수동 변경"):
         client_id_input = st.text_input(
             "Client ID",
@@ -90,6 +107,7 @@ if env_client_id and env_client_secret:
             st.session_state["client_secret"] = client_secret_input
             st.rerun()
 else:
+    st.sidebar.warning("⚠️ API 설정이 자동 로드되지 않았습니다. 수동으로 입력해 주세요.")
     client_id_input = st.sidebar.text_input(
         "Client ID",
         value=st.session_state.get("client_id", ""),
