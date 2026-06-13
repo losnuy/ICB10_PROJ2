@@ -171,17 +171,19 @@ if not client_id or not client_secret:
 
 # 3. 멀티 페이지 구성 (st.navigation 사용)
 # 각 스크립트 절대경로 생성
+integrated_page = st.Page(os.path.join(pages_dir, "integrated_analysis.py"), title="🔍 통합 키워드 상세 분석", icon="🔎")
 trend_page = st.Page(os.path.join(pages_dir, "trend.py"), title="📈 통합 검색어 트렌드", icon="📊")
 shopping_trend_page = st.Page(os.path.join(pages_dir, "shopping_trend.py"), title="🛍️ 쇼핑 검색어 트렌드", icon="🛒")
-shopping_search_page = st.Page(os.path.join(pages_dir, "shopping_search.py"), title="📦 쇼핑 상품 분석", icon="🔎")
+shopping_search_page = st.Page(os.path.join(pages_dir, "shopping_search.py"), title="📦 쇼핑 상품 분석", icon="🛒")
 blog_page = st.Page(os.path.join(pages_dir, "blog.py"), title="📝 블로그 검색 분석", icon="✍️")
 cafe_page = st.Page(os.path.join(pages_dir, "cafe.py"), title="💬 카페글 검색 분석", icon="☕")
 news_page = st.Page(os.path.join(pages_dir, "news.py"), title="📰 뉴스 검색 분석", icon="🗞️")
 
 # 네비게이션 생성
 pages_dict = {
+    "종합 분석": [integrated_page],
     "트렌드 분석": [trend_page, shopping_trend_page],
-    "데이터 검색 분석": [shopping_search_page, blog_page, cafe_page, news_page]
+    "개별 검색 분석": [shopping_search_page, blog_page, cafe_page, news_page]
 }
 
 pg = st.navigation(pages_dict)
