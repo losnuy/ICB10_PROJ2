@@ -1,3 +1,19 @@
+# 🚀 ICB10_PROJ2 프로젝트
+
+## 🌐 Streamlit 서비스 접속 주소
+- [Streamlit 대시보드 바로가기](https://icb10proj2-svrgyx6stpjcz8dbyst4jr.streamlit.app/)
+
+## 🛠️ 최근 프로젝트 작업 내역
+* **Git 자동화 환경 구축 완료**
+  * **실시간 파일 감시 및 자동 백업(커밋 & 푸시)**
+    * [auto_git_sync.py](file:///C:/ICB10_PROJ2/auto_git_sync.py) 작성: 파일의 생성, 수정, 삭제를 실시간 감시하여 3초 디바운싱 후 변경 내용 자동 커밋 및 푸시 진행.
+    * [run_auto_sync.bat](file:///C:/ICB10_PROJ2/run_auto_sync.bat) 작성: 윈도우 환경에서 더블클릭으로 자동 동기화 프로그램을 손쉽게 실행 가능하도록 배치 파일 구성.
+    * 예외 처리: `.git`, `.venv`, `__pycache__` 등 시스템 파일 제외 및 원격 저장소 충돌 시 자동 Pull/Rebase 후 푸시하도록 예외 복구 로직 적용.
+  * **Git `post-commit` 훅 설정 완료**
+    * [post-commit](file:///C:/ICB10_PROJ2/.git/hooks/post-commit) 훅을 설정하여 수동 커밋 시에도 자동으로 원격 저장소에 푸시되도록 구성 완료.
+
+---
+
 ## STEP 0. 팀 구성 및 협업 환경 세팅
 
 ### 슬랙 세팅
